@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "rootDir": "./src/",
+    "sourceMap": true,
+    "target": "ESNext",
+    "moduleResolution": "Bundler",
+  },
+}
