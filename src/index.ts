@@ -29,6 +29,7 @@ function setup() {
 }
 
 function keyPressed() {
+  console.log(key);
   switch (key) {
     case "-": {
       player.damage(1);
@@ -42,6 +43,12 @@ function keyPressed() {
 
     case "1": {
       Global.addEntity(new Enemy());
+    }
+
+    case "2": {
+      Array.from({ length: 5 }).forEach(() => {
+        Global.addEntity(new Enemy());
+      });
     }
 
     default: {

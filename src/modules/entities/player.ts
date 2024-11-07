@@ -24,7 +24,7 @@ export class Player extends BaseEntity {
     mode: CtrlMode = CtrlMode.WASD,
     position = createVector(window.innerWidth / 2, window.innerHeight / 2),
     size = 50,
-    lives: number = 3,
+    lives: number = GlobalState.settings.lives.default,
     speed: number = 5
   ) {
     super(new PlayerMovementStrategy(speed, mode));
@@ -53,7 +53,7 @@ export class Player extends BaseEntity {
   }
 
   public heal(heal: number) {
-    if (this.lives + heal > GlobalState.settings.maxLives) return;
+    if (this.lives + heal > GlobalState.settings.lives.max) return;
     this.lives += heal;
   }
 

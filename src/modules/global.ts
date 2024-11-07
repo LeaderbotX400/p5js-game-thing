@@ -20,8 +20,10 @@ export class GlobalState {
       size: 50,
       offset: 10,
     },
-    maxLives: 5,
-    defaultLives: 3,
+    lives: {
+      max: 5,
+      default: 3,
+    },
   };
 
   //! Keys
@@ -46,17 +48,20 @@ export class GlobalState {
     this.entities.delete(entity);
   }
 
-  public updateEntities() {    
+  public updateEntities() {
     this.entities.forEach((e) => e.update());
   }
 
   public closetEntitiesTo(target: BaseEntity) {
-    return this.entities.values().toArray().sort((a, b) => {
-      const aDistance = p5.Vector.dist(a.position, target.position);
-      const bDistance = p5.Vector.dist(b.position, target.position);
+    return this.entities
+      .values()
+      .toArray()
+      .sort((a, b) => {
+        const aDistance = p5.Vector.dist(a.position, target.position);
+        const bDistance = p5.Vector.dist(b.position, target.position);
 
-      return aDistance - bDistance;
-    });
+        return aDistance - bDistance;
+      });
   }
 
   //! Player
@@ -71,13 +76,15 @@ export class GlobalState {
   }
 
   public get players() {
-    return this.entities
-      .entries()
-      .filter((e) => e instanceof Player);
+    return this.entities.entries().filter((e) => e instanceof Player);
   }
 
   //! Enemies
   public get enemies() {
     return this.entities.entries().filter((e) => e instanceof Enemy);
+  }
+
+  public killAllEnemies() {
+    this.enemies.forEach((e) => this.removeEntity(e));
   }
 }

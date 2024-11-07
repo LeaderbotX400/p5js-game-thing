@@ -15,20 +15,21 @@ export interface BaseEntity {
 export class BaseEntity {
   private Global = GlobalState.instance;
   private velocity = createVector(0, 0);
+
   constructor(
     public movementStrategy: MovementStrategy,
     public position = createVector(
       window.innerWidth / 2,
       window.innerHeight / 2
     ),
+    public mass = 1,
     public size = 50,
-    public inertia = 0.6,
-    public mass = 1
+    public inertia = 0.6
   ) {}
 
   public update() {
     const acceleration = this.movementStrategy.calculateAcceleration();
-    this.detectCollisions(acceleration);
+    this.detectCollisions();
     this.applyInertia(acceleration);
     this.clampToBounds();
     this.position.add(this.velocity);
@@ -60,38 +61,56 @@ export class BaseEntity {
     }
   }
 
-  private detectCollisions(target: p5.Vector) {
-  this.Global.entities.values().filter((e) => p5.Vector.dist(this.position, e.position) < (this.size + 5)).forEach((entity) => {
-    if (entity !== this) {
-      const distance = p5.Vector.dist(this.position, entity.position);
-      const combinedRadii = (this.size / 2) + (entity.size / 2);
+  private detectCollisions() {
+    const { entities } = this.Global;
 
-      if (distance < combinedRadii) {
-        // Calculate the collision normal
-        const collisionNormal = p5.Vector.sub(this.position, entity.position).normalize();
+    entities.forEach((entity) => {
+      if (entity !== this) {
+        const distance = p5.Vector.dist(this.position, entity.position);
+        const combinedRadii = this.size / 2 + entity.size / 2;
 
-        // Calculate the relative velocity
-        const relativeVelocity = p5.Vector.sub(this.velocity, entity.velocity);
+        if (distance < combinedRadii) {
+          // Calculate the collision normal
+          const collisionNormal = p5.Vector.sub(
+            this.position,
+            entity.position
+          ).normalize();
 
-        // Calculate the velocity along the normal
-        const velocityAlongNormal = p5.Vector.dot(relativeVelocity, collisionNormal);
+          // Calculate the relative velocity
+          const relativeVelocity = p5.Vector.sub(
+            this.velocity,
+            entity.velocity
+          );
 
-        // If the objects are moving apart, do nothing
-        if (velocityAlongNormal > 0) return;
+          // Calculate the velocity along the normal
+          const velocityAlongNormal = p5.Vector.dot(
+            relativeVelocity,
+            collisionNormal
+          );
 
-        // Calculate the restitution (bounciness)
-        const restitution = 0.5; // Adjust this value to control the bounciness
+          // If the objects are moving apart, do nothing
+          if (velocityAlongNormal > 0) return;
 
-        // Calculate the impulse scalar
-        const impulseScalar = -(1 + restitution) * velocityAlongNormal / (1 / this.mass + 1 / entity.mass);
+          // Calculate the restitution (bounciness)
+          const restitution = 0; // Adjust this value to control the bounciness
 
-        // Apply the impulse to the entities
-        const impulse = createVector(impulseScalar, impulseScalar);
-        p5.Vector.mult(collisionNormal, impulseScalar, impulse);
-        this.velocity.add(impulse.div(this.mass));
-        entity.velocity.sub(impulse.div(this.mass));
+          // Calculate the impulse scalar
+          const impulseScalar =
+            (-(1 + restitution) * velocityAlongNormal) /
+            (1 / this.mass + 1 / entity.mass);
+
+          // Apply the impulse to the entities
+          const impulse = collisionNormal.copy().mult(impulseScalar);
+          this.velocity.add(impulse.copy().div(this.mass));
+          entity.velocity.sub(impulse.copy().div(entity.mass));
+
+          // Separate the entities to prevent overlap
+          const overlap = combinedRadii - distance;
+          const correction = collisionNormal.copy().mult(overlap / 2);
+          this.position.add(correction);
+          entity.position.sub(correction);
+        }
       }
-    }
-  });
-}
+    });
+  }
 }
