@@ -1,6 +1,7 @@
 import { Enemy } from "./modules/entities/enemy";
 import { Player } from "./modules/entities/player";
-import { GlobalState as _GlobalState } from "./modules/global";
+import { GlobalState as _GlobalState, GameStates } from "./modules/global";
+import { startScreen } from "./screens/start";
 import { drawHearts } from "./utils";
 
 let spawnRate: number;
@@ -51,6 +52,15 @@ function keyPressed() {
       });
     }
 
+    case "Enter": {
+      if (Global.gameIs(GameStates.START)) {
+        Global.gameState = GameStates.PLAYING;
+        return;
+      }
+
+      break;
+    }
+
     default: {
       break;
     }
@@ -64,9 +74,29 @@ function keyReleased() {
 }
 
 function draw() {
-  background(35, 80, 90);
-  Global.updateEntities();
-  drawHearts(player.lives);
+  switch (Global.gameState) {
+    case GameStates.START: {
+      startScreen();
+      break;
+    }
 
-  // console.table(Global.closetEntitiesTo(player).map((e) => ({x: e.position.x , y: e.position.y})));
+    case GameStates.PLAYING: {
+      background(35, 80, 90);
+      Global.updateEntities();
+      drawHearts(player.lives);
+      break;
+    }
+
+    case GameStates.PAUSED: {
+      break;
+    }
+
+    case GameStates.GAME_OVER: {
+      break;
+    }
+
+    default: {
+      break;
+    }
+  }
 }

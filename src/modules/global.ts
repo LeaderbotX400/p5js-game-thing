@@ -2,6 +2,13 @@ import { BaseEntity } from "./entities/base";
 import { Enemy } from "./entities/enemy";
 import { Player } from "./entities/player";
 
+export enum GameStates {
+  START,
+  PLAYING,
+  PAUSED,
+  GAME_OVER,
+}
+
 export class GlobalState {
   private static _instance: GlobalState;
 
@@ -25,6 +32,12 @@ export class GlobalState {
       default: 3,
     },
   };
+
+  public gameState = GameStates.START;
+
+  public gameIs(targetState: GameStates) {
+    return this.gameState === targetState;
+  }
 
   //! Keys
   public pressedKeys = new Set<string>();
