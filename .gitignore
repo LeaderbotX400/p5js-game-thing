@@ -3,3 +3,7 @@ old
 
 .direnv
 dist
+
+.jekyll-cache
+.jekyll-metadata
+_site

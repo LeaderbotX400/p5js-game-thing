@@ -100,3 +100,11 @@ function draw() {
     }
   }
 }
+
+// Expose p5.js functions to the global scope
+Object.defineProperty(window, "preload", preload);
+Object.defineProperty(window, "setup", setup);
+Object.defineProperty(window, "draw", draw);
+Object.defineProperty(window, "keyPressed", keyPressed);
+Object.defineProperty(window, "keyReleased", keyReleased);
+Object.defineProperty(window, "windowResized", windowResized);

@@ -1,0 +1,13 @@
+exclude: 
+  - src
+  - flake.nix
+  - flake.lock
+  - global.d.ts
+  - package.json
+  - pnpm-lock.yaml
+  - tsconfig.json
+  - esbuild.mjs
+
+keep_files:
+  - index.html
+  - dist

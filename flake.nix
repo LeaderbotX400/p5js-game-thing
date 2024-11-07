@@ -13,10 +13,7 @@
           buildInputs = with pkgs; [
             nodePackages.nodejs
             nodePackages.pnpm
-            zulu 
-            firebase-tools 
-            cloudflared
-            wrangler
+            jekyll
           ];
         };
       }
