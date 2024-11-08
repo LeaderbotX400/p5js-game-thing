@@ -1,4 +1,4 @@
-import { GlobalState } from "../global";
+import { Simulation } from "../simulation";
 
 export interface MovementStrategy {
   calculateAcceleration(): p5.Vector;
@@ -13,7 +13,7 @@ export interface BaseEntity {
  * Represents an entity in the game (e.g. player, enemy)
  */
 export class BaseEntity {
-  private Global = GlobalState.instance;
+  private Sim = Simulation.instance;
   private velocity = createVector(0, 0);
 
   constructor(
@@ -61,7 +61,7 @@ export class BaseEntity {
     }
   }
   private detectCollisions() {
-    const { entities } = this.Global;
+    const { entities } = this.Sim;
 
     entities.forEach((entity) => {
       if (entity !== this) {

@@ -1,19 +1,20 @@
 import { Enemy } from "./modules/entities/enemy";
-import { Player } from "./modules/entities/player";
 import { GlobalState as _GlobalState, GameStates } from "./modules/global";
+import { Simulation as _Simulation } from "./modules/simulation";
 import { startScreen } from "./screens/start";
-import { drawHearts } from "./utils";
 
 let spawnRate: number;
 
 let Global: _GlobalState;
+let Sim: _Simulation;
 
-let player: Player;
+// let player: Player;
 let enemies: Enemy[] = [];
 
 function preload() {
   Global = _GlobalState.instance;
-  player = Global.createPlayer();
+  Sim = _Simulation.instance;
+  // player = Sim.createPlayer();
 }
 
 function windowResized() {
@@ -32,23 +33,23 @@ function setup() {
 function keyPressed() {
   switch (key) {
     case "-": {
-      player.damage(1);
+      // player.damage(1);
       return;
     }
 
     case "+": {
-      player.heal(1);
+      // player.heal(1);
       break;
     }
 
     case "1": {
-      Global.addEntity(new Enemy());
+      Sim.addEntity(new Enemy());
       break;
     }
 
     case "2": {
       Array.from({ length: 5 }).forEach(() => {
-        Global.addEntity(new Enemy());
+        Sim.addEntity(new Enemy());
       });
       break;
     }
@@ -88,8 +89,8 @@ function draw() {
 
     case GameStates.PLAYING: {
       background(35, 80, 90);
-      Global.updateEntities();
-      drawHearts(player.lives);
+      Sim.update();
+      // drawHearts(player.lives);
       break;
     }
 
