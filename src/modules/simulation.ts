@@ -14,7 +14,7 @@ export class Simulation {
         size: 50,
         speed: 1,
 
-        spawnRate: random(5, 15), // seconds
+        spawnRate: random(5, 10), // seconds
       },
     },
   };
@@ -38,12 +38,9 @@ export class Simulation {
   public update() {
     this.entities.forEach((entity) => entity.update());
 
-    // if (
-    //   frameCount % (this.settings.hazard.enemy.spawnRate * frameRate()) ===
-    //   0
-    // ) {
-    //   this.spawnEnemy();
-    // }
+    if (frameCount % Math.round(this.settings.hazard.enemy.spawnRate * (frameRate() * 0.8)) === 0) {
+      this.spawnEnemy();
+    }
   }
 
   public draw() {
@@ -99,6 +96,8 @@ export class Simulation {
   }
 
   public spawnEnemy() {
+    console.log("Spawning enemy");
+
     this.addEntity(new Enemy());
     this.randomizeEnemySpawnRate();
   }
