@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { GlobalState } from "../global";
+import { Simulation } from "../simulation";
 import { BaseEntity } from "./base";
 
 export class Enemy extends BaseEntity {
@@ -13,17 +13,13 @@ export class Enemy extends BaseEntity {
   };
 
   public constructor(
-    playerPosition: p5.Vector = GlobalState.instance.player.position,
+    playerPosition: p5.Vector = Simulation.instance.player.position,
     position = createVector(random(0, windowWidth), random(0, windowHeight)),
     size = 50,
     speed = random(1, 3)
   ) {
     super(
-      new SeekPlayerMovementStrategy(
-        speed,
-        position,
-        playerPosition
-      ),
+      new SeekPlayerMovementStrategy(speed, position, playerPosition),
       position
     );
 
@@ -56,12 +52,14 @@ export class SeekPlayerMovementStrategy {
   ) {}
 
   calculateAcceleration(): p5.Vector {
-     // Calculate the direction vector from the enemy to the player
+    // Calculate the direction vector from the enemy to the player
     const directionX = this.playerPos.x - this.pos.x;
     const directionY = this.playerPos.y - this.pos.y;
 
     // Calculate the distance
-    const distance = Math.sqrt(directionX * directionX + directionY * directionY);
+    const distance = Math.sqrt(
+      directionX * directionX + directionY * directionY
+    );
 
     // Normalize the direction vector
     const normalizedDirectionX = directionX / distance;

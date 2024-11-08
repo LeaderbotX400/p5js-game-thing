@@ -8,6 +8,17 @@ import { Player } from "./entities/player";
 export class Simulation {
   public entities: BaseEntity[] = [];
 
+  public settings = {
+    hazard: {
+      enemy: {
+        size: 50,
+        speed: 1,
+
+        spawnRate: random(5, 15), // seconds
+      },
+    },
+  };
+
   private static _instance: Simulation;
 
   private constructor() {}
@@ -26,6 +37,13 @@ export class Simulation {
 
   public update() {
     this.entities.forEach((entity) => entity.update());
+
+    // if (
+    //   frameCount % (this.settings.hazard.enemy.spawnRate * frameRate()) ===
+    //   0
+    // ) {
+    //   this.spawnEnemy();
+    // }
   }
 
   public draw() {
@@ -33,20 +51,21 @@ export class Simulation {
   }
 
   private drawLine(positionA: p5.Vector, positionB: p5.Vector) {
-    // Assuming you have a p5.js environment
     fill("green");
     line(positionA.x, positionA.y, positionB.x, positionB.y);
   }
 
-  /**
-   * Only draws lines between entities that are close enough to calculate collision.
-   * @param entity
-   */
+  public drawLinesBetweenEntities() {
+    for (let i = 0; i < this.entities.length; i++) {
+      this.drawLinesFromEntity(this.entities[i]);
+    }
+  }
+
   public drawLinesFromEntity(entity: BaseEntity) {
     const entities = this.closetEntitiesTo(entity).filter(
       (e) =>
         e !== entity &&
-        e.position.dist(entity.position) <= (entity.size + e.size) / 2
+        e.position.dist(entity.position) <= (entity.size + e.size) / 2 + 5
     );
 
     for (let i = 0; i < entities.length; i++) {
@@ -66,20 +85,22 @@ export class Simulation {
   }
 
   //! Player
-  public createPlayer() {
-    const player = new Player();
-    this.addEntity(player);
-
-    return player;
-  }
-
-  public get players() {
-    return this.entities.filter((e) => e instanceof Player);
+  public get player() {
+    return this.entities.find((e) => e instanceof Player);
   }
 
   //! Enemies
   public get enemies() {
     return this.entities.filter((e) => e instanceof Enemy);
+  }
+
+  public randomizeEnemySpawnRate() {
+    this.settings.hazard.enemy.spawnRate = random(5, 15);
+  }
+
+  public spawnEnemy() {
+    this.addEntity(new Enemy());
+    this.randomizeEnemySpawnRate();
   }
 
   public killAllEnemies() {

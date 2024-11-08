@@ -90,8 +90,8 @@ export class BaseEntity {
           // If the objects are moving apart, do nothing
           if (velocityAlongNormal > 0) return;
 
-          // Calculate the restitution (bounciness)
-          const restitution = 0; // Adjust this value to control the bounciness
+          // Calculate the restitution
+          const restitution = 0.6; // Adjust this value to control the bounciness
 
           // Calculate the impulse scalar
           const impulseScalar =
@@ -99,13 +99,19 @@ export class BaseEntity {
             (1 / this.mass + 1 / entity.mass);
 
           // Apply the impulse to the entities
-          const impulse = collisionNormal.copy().mult(impulseScalar);
-          this.velocity.add(impulse.copy().div(this.mass));
-          entity.velocity.sub(impulse.copy().div(entity.mass));
+          const impulse = p5.Vector.mult(
+            collisionNormal,
+            impulseScalar
+          ) as unknown as p5.Vector;
+          this.velocity.add(impulse.div(this.mass));
+          entity.velocity.sub(impulse.div(entity.mass));
 
           // Separate the entities to prevent overlap
           const overlap = combinedRadii - distance;
-          const correction = collisionNormal.copy().mult(overlap / 2);
+          const correction = p5.Vector.mult(
+            collisionNormal,
+            overlap / 2
+          ) as unknown as p5.Vector;
           this.position.add(correction);
           entity.position.sub(correction);
         }
