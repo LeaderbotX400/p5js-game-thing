@@ -60,7 +60,6 @@ export class BaseEntity {
       this.position.y = window.innerHeight - this.size / 2;
     }
   }
-
   private detectCollisions() {
     const { entities } = this.Global;
 

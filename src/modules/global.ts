@@ -33,7 +33,7 @@ export class GlobalState {
     },
   };
 
-  public gameState = GameStates.START;
+  public gameState = GameStates.PLAYING;
 
   public gameIs(targetState: GameStates) {
     return this.gameState === targetState;
@@ -62,6 +62,7 @@ export class GlobalState {
   }
 
   public updateEntities() {
+    // this.drawLinesBetweenEntities();
     this.entities.forEach((e) => e.update());
   }
 
@@ -90,6 +91,23 @@ export class GlobalState {
 
   public get players() {
     return this.entities.entries().filter((e) => e instanceof Player);
+  }
+
+  private drawLinesBetweenEntities() {
+    const entities = Array.from(this.entities.values());
+    for (let i = 0; i < entities.length; i++) {
+      for (let j = i + 1; j < entities.length; j++) {
+        const entityA = entities[i];
+        const entityB = entities[j];
+        this.drawLine(entityA.position, entityB.position);
+      }
+    }
+  }
+
+  private drawLine(positionA: p5.Vector, positionB: p5.Vector) {
+    // Assuming you have a p5.js environment
+    fill("green");
+    line(positionA.x, positionA.y, positionB.x, positionB.y);
   }
 
   //! Enemies

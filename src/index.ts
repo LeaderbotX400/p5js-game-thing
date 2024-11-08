@@ -26,15 +26,14 @@ function setup() {
   spawnRate = Math.round(random(5, 15));
 
   smooth();
-  noStroke();
+  // noStroke();
 }
 
 function keyPressed() {
-  console.log(key);
   switch (key) {
     case "-": {
       player.damage(1);
-      break;
+      return;
     }
 
     case "+": {
@@ -44,12 +43,19 @@ function keyPressed() {
 
     case "1": {
       Global.addEntity(new Enemy());
+      break;
     }
 
     case "2": {
       Array.from({ length: 5 }).forEach(() => {
         Global.addEntity(new Enemy());
       });
+      break;
+    }
+
+    case "Escape": {
+      window.location.reload();
+      break;
     }
 
     case "Enter": {
