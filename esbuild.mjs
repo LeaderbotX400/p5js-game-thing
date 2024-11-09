@@ -12,7 +12,7 @@ const ctx = await esbuild.context({
   treeShaking: false,
   sourcemap: "linked",
   external: ["p5"],
-  logLevel: "verbose",
+  logLevel: "debug",
 });
 
 if (args.find((v) => v === "--watch")) {

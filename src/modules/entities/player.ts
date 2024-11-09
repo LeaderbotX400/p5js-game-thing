@@ -1,6 +1,7 @@
 import p5 from "p5";
 import { GlobalState } from "../global";
-import { BaseEntity, MovementStrategy } from "./base";
+import { BaseEntity, EntityType, MovementStrategy } from "./base";
+import { Weapon } from "./weapon";
 
 export enum CtrlMode {
   WASD,
@@ -27,7 +28,7 @@ export class Player extends BaseEntity {
     lives: number = GlobalState.settings.lives.default,
     speed: number = 5
   ) {
-    super(new PlayerMovementStrategy(speed, mode));
+    super(EntityType.PLAYER, new PlayerMovementStrategy(speed, mode));
 
     this.lives = lives;
 
@@ -40,6 +41,11 @@ export class Player extends BaseEntity {
       speed,
       position,
     };
+  }
+  private weapon = new Weapon(10, 100, 1);
+
+  public fireWeapon() {
+    return this.weapon.fire(this.position, createVector(mouseX, mouseY));
   }
 
   public draw() {
@@ -60,6 +66,14 @@ export class Player extends BaseEntity {
   public update() {
     if (this.lives > 0) super.update();
     this.draw();
+
+    this.telemetry.addData("Player Position", [
+      this.position.x.toFixed(2),
+      this.position.y.toFixed(2),
+    ]);
+
+    this.telemetry.addData("Player Lives", [this.lives]);
+    this.telemetry.addData("Player Speed", [this.kinematics.speed]);
   }
 }
 

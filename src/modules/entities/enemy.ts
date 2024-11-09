@@ -1,6 +1,6 @@
 import p5 from "p5";
 import { Simulation } from "../simulation";
-import { BaseEntity } from "./base";
+import { BaseEntity, EntityType } from "./base";
 
 export class Enemy extends BaseEntity {
   public settings: {
@@ -19,6 +19,7 @@ export class Enemy extends BaseEntity {
     speed = random(1, 3)
   ) {
     super(
+      EntityType.ENEMY,
       new SeekPlayerMovementStrategy(speed, position, playerPosition),
       position
     );

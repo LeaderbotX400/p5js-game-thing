@@ -2,9 +2,11 @@ import { Enemy } from "./modules/entities/enemy";
 import { Player } from "./modules/entities/player";
 import { GlobalState as _GlobalState, GameStates } from "./modules/global";
 import { Simulation as _Simulation } from "./modules/simulation";
+import { TelemetrySystem } from "./modules/telemetry/service";
 import { startScreen } from "./screens/start";
 import { drawHearts } from "./utils";
 
+let t: TelemetrySystem;
 let Global: _GlobalState;
 let Sim: _Simulation;
 
@@ -13,7 +15,7 @@ let player: Player;
 function preload() {
   Global = _GlobalState.instance;
   Sim = _Simulation.instance;
-  console.log(Sim.entities);
+  t = TelemetrySystem.instance;
   player = new Player();
 
   Sim.addEntity(player);
@@ -53,6 +55,11 @@ function keyPressed() {
       break;
     }
 
+    case " ": {
+      player.fireWeapon();
+      break;
+    }
+
     case "Escape": {
       window.location.reload();
       break;
@@ -88,6 +95,8 @@ function draw() {
     case GameStates.PLAYING: {
       background(35, 80, 90);
       drawHearts(player.lives);
+      t.renderPackets();
+
       Sim.update();
       Sim.drawLinesBetweenEntities();
       Sim.drawLinesFromEntity(player);

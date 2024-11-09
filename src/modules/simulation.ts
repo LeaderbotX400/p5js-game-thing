@@ -1,11 +1,14 @@
 import { BaseEntity } from "./entities/base";
 import { Enemy } from "./entities/enemy";
 import { Player } from "./entities/player";
+import { Projectile } from "./entities/weapon";
+import { TelemetrySystem } from "./telemetry/service";
 
 /**
  * Used for entity tracking, updating, and drawing.
  */
 export class Simulation {
+  private telemetry: TelemetrySystem = TelemetrySystem.instance;
   public entities: BaseEntity[] = [];
 
   public settings = {
@@ -31,16 +34,26 @@ export class Simulation {
     return Simulation._instance;
   }
 
-  public addEntity(entity: BaseEntity) {
+  public addEntity(entity: BaseEntity | Projectile) {
     this.entities.push(entity);
   }
 
+  public removeEntity(entity: BaseEntity) {
+    this.entities.splice(this.entities.indexOf(entity), 1);
+  }
+
   public update() {
+    this.telemetry.addData("\n######## SIMULATION ########");
+    this.telemetry.addData("Entities", [this.entities.length]);
+    this.telemetry.addData("Enemies", [this.enemies.length]);
+    this.telemetry.addData("Frame Rate", Math.round(frameRate()));
+    this.telemetry.addData("Frame Count", frameCount);
+    this.telemetry.addData("############################\n");
     this.entities.forEach((entity) => entity.update());
 
-    if (frameCount % Math.round(this.settings.hazard.enemy.spawnRate * (frameRate() * 0.8)) === 0) {
-      this.spawnEnemy();
-    }
+    // if (frameCount % Math.round(this.settings.hazard.enemy.spawnRate * (frameRate() * 0.8)) === 0) {
+    //   this.spawnEnemy();
+    // }
   }
 
   public draw() {

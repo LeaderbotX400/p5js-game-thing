@@ -1,4 +1,5 @@
 import { Simulation } from "../simulation";
+import { TelemetrySystem } from "../telemetry/service";
 
 export interface MovementStrategy {
   calculateAcceleration(): p5.Vector;
@@ -9,29 +10,40 @@ export interface BaseEntity {
   draw(): void;
 }
 
+export enum EntityType {
+  PLAYER,
+  ENEMY,
+  PROJECTILE,
+}
+
 /**
  * Represents an entity in the game (e.g. player, enemy)
  */
 export class BaseEntity {
-  private Sim = Simulation.instance;
-  private velocity = createVector(0, 0);
+  public telemetry: TelemetrySystem = TelemetrySystem.instance;
+  public Sim = Simulation.instance;
+  private id: string;
 
   constructor(
+    public type: EntityType,
     public movementStrategy: MovementStrategy,
     public position = createVector(
       window.innerWidth / 2,
       window.innerHeight / 2
     ),
-    public mass = 1,
+    public velocity = createVector(0, 0),
     public size = 50,
+    public mass = 1,
     public inertia = 0.6
-  ) {}
+  ) {
+    this.id = Math.random().toString(36).substr(2, 9);
+  }
 
   public update() {
     const acceleration = this.movementStrategy.calculateAcceleration();
+    this.clampToBounds();
     this.detectCollisions();
     this.applyInertia(acceleration);
-    this.clampToBounds();
     this.position.add(this.velocity);
   }
 
@@ -69,6 +81,16 @@ export class BaseEntity {
         const combinedRadii = this.size / 2 + entity.size / 2;
 
         if (distance < combinedRadii) {
+          if (
+            entity.type === EntityType.PROJECTILE &&
+            this.type === EntityType.ENEMY
+          ) {
+            console.log("Hit", entity, this);
+            this.Sim.removeEntity(entity);
+            this.Sim.removeEntity(this);
+            return;
+          }
+
           // Calculate the collision normal
           const collisionNormal = p5.Vector.sub(
             this.position,
